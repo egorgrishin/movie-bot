@@ -2,13 +2,17 @@
 
 namespace App\Commands;
 
-use App\Classes\Request;
+use App\Classes\Dto;
+use App\Classes\Telegram;
 use App\Contracts\TelegramCommand;
 
 class StartCommand implements TelegramCommand
 {
-    public function run(Request $request): void
+    public function run(Dto $dto): void
     {
-        // TODO: Implement run() method.
+        Telegram::send([
+            'chat_id' => $dto->chat_id,
+            'text'    => 'Это тестовое сообщение',
+        ]);
     }
 }

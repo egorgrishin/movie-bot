@@ -2,9 +2,9 @@
 
 namespace App\Contracts;
 
-use App\Classes\Request;
+use App\Classes\Dto;
 
 interface TelegramCommand
 {
-    public function run(Request $request): void;
+    public function run(Dto $dto): void;
 }
