@@ -82,15 +82,14 @@ class MovieSeeder extends Seeder
                 );
                 $related_countries = array_merge(
                     $related_countries,
-                    $this->getMovieGenres($id, $genres, $movie['genres'])
+                    $this->getMovieCountries($id, $countries, $movie['countries'])
                 );
                 $trailers = array_merge(
                     $trailers,
-                    $this->getMovieGenres($id, $genres, $movie['genres'])
+                    $this->getMovieTrailers($id, $movie['videos']['trailers'])
                 );
 
                 if (count($movies) == 100) {
-                    dd($related_genres);
                     DB::table('movies')->insert($movies);
                     DB::table('genre_movie')->insert($related_genres);
                     DB::table('country_movie')->insert($related_countries);
