@@ -149,7 +149,7 @@ class MovieSeeder extends Seeder
         foreach ($trailers as $trailer) {
             $data[] = [
                 'movie_id'   => $movie_id,
-                'name'       => $this->removeNonBreakingSpaces($trailer['name'] ?? 'Трейлер'),
+                'name'       => $this->removeNonBreakingSpaces($trailer['name'] ?: 'Трейлер'),
                 'url'        => $trailer['url'],
             ];
         }
