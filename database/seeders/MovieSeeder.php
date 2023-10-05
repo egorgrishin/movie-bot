@@ -90,10 +90,10 @@ class MovieSeeder extends Seeder
                 );
 
                 if (count($movies) == 100) {
-//                    DB::table('movies')->insert($movies);
-//                    DB::table('genre_movie')->insert($related_genres);
-//                    DB::table('country_movie')->insert($related_countries);
-//                    DB::table('trailers')->insert($trailers);
+                    DB::table('movies')->insert($movies);
+                    DB::table('genre_movie')->insert($related_genres);
+                    DB::table('country_movie')->insert($related_countries);
+                    DB::table('trailers')->insert($trailers);
                     $movies = [];
                     $related_genres = [];
                     $related_countries = [];
@@ -103,6 +103,11 @@ class MovieSeeder extends Seeder
                 $id++;
             }
         }
+
+        DB::table('movies')->insert($movies);
+        DB::table('genre_movie')->insert($related_genres);
+        DB::table('country_movie')->insert($related_countries);
+        DB::table('trailers')->insert($trailers);
     }
 
     private function getMovieGenres(int $movie_id, Collection $genres, array $movie_genres): array
