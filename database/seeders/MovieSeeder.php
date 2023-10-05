@@ -45,7 +45,7 @@ class MovieSeeder extends Seeder
         $related_countries = [];
         $trailers = [];
 
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; true; $i++) {
             if (!file_exists($path = __DIR__ . "/../../films/pages/$i.json")) {
                 break;
             }
