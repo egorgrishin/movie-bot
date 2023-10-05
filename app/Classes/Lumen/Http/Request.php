@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 class Request extends LumenRequest
 {
-    public readonly Dto $dto;
+    public Dto $dto;
 
     /**
      * Create an Illuminate request from a Symfony instance.
@@ -15,7 +15,7 @@ class Request extends LumenRequest
     public static function createFromBase(SymfonyRequest $request): static
     {
         $request = parent::createFromBase($request);
-        $request->dto = Dto::make($request);
+        $request->dto = DtoFactory::createDto($request);
 
         return $request;
     }

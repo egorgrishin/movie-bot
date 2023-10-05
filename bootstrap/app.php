@@ -7,12 +7,12 @@ require_once __DIR__.'/../vendor/autoload.php';
 ))->bootstrap();
 date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
 
-$app = new \App\Classes\Lumen\Application(
+$app = new App\Classes\Lumen\Application(
     dirname(__DIR__)
 );
 
-$app->withFacades();
 //$app->withEloquent();
+$app->withFacades();
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
@@ -26,7 +26,7 @@ $app->singleton(
 $app->configure('app');
 
 $app->middleware([
-    App\Middleware\LoggingRequest::class
+    App\Middleware\LoggingRequest::class,
 ]);
 
 $app->register(App\Providers\AppServiceProvider::class);
