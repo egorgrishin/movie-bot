@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('trailers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('movie_id');
+            $table->foreignId('movie_id')->constrained();
             $table->string('name', 511);
             $table->string('url', 255);
 
