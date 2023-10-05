@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class GenreSeeder extends Seeder
 {
@@ -11,6 +12,17 @@ class GenreSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('genres')->insert(
+            $this->getGenres()
+        );
+    }
+
+    /**
+     * Возвращает список жанров для вставки в базу данных
+     */
+    private function getGenres(): array
+    {
+        $data = [];
         $genres = [];
         $i = 1;
 
@@ -29,11 +41,14 @@ class GenreSeeder extends Seeder
                 foreach ($movie_genres as $genre) {
                     if (!in_array($genre, $genres)) {
                         $genres[] = $genre;
+                        $data[] = ['name' => $genre];
                     }
                 }
             }
 
             $i++;
         }
+
+        return $data;
     }
 }
