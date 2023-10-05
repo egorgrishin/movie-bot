@@ -4,6 +4,7 @@ namespace App\Classes\Lumen\Http;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class Dto
 {
@@ -14,6 +15,7 @@ class Dto
     public static function make(Request $request): self
     {
         $dto = new self();
+        Log::debug(var_export($request->all(), true));
         if (self::isCommonMessage($request)) {
             $dto->chat_id = $request->input('message.chat.id');
             $dto->data = $request->input('message.text', '');
