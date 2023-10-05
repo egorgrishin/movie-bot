@@ -10,7 +10,7 @@ class Dto
 {
     public readonly int    $chat_id;
     public readonly string $data;
-    public readonly ?User  $user;
+//    public readonly ?User  $user;
 
     public static function make(Request $request): self
     {
@@ -24,7 +24,7 @@ class Dto
             $dto->data = $request->input('callback_query.data');
         }
 
-        $dto->user = self::findUser($dto->chat_id);
+//        $dto->user = self::findUser($dto->chat_id);
         return $dto;
     }
 
