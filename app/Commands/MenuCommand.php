@@ -2,9 +2,10 @@
 
 namespace App\Commands;
 
-use App\Classes\Dto;
-use App\Classes\Telegram;
+use App\Classes\Lumen\Http\Dto;
+use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramCommand;
+use App\Enums\MenuButton;
 
 class MenuCommand implements TelegramCommand
 {
@@ -12,7 +13,25 @@ class MenuCommand implements TelegramCommand
     {
         Telegram::send([
             'chat_id' => $dto->chat_id,
-            'text'    => 'Меню',
+            'text'    => 'Выберите действие',
+            'reply_markup' => [
+                'inline_keyboard'   => [
+                    [
+                        [
+                            'text'          => MenuButton::Find->value,
+                            'callback_data' => MenuButton::Find->name,
+                        ],
+                    ],
+                    [
+                        [
+                            'text'          => MenuButton::Match->value,
+                            'callback_data' => MenuButton::Match->name,
+                        ],
+                    ],
+                ],
+                'one_time_keyboard' => true,
+                'resize_keyboard'   => true,
+            ],
         ]);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Contracts;
 
-use App\Classes\Dto;
+use App\Classes\Lumen\Http\Dto;
 
 interface TelegramCommand
 {

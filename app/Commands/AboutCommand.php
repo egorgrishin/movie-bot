@@ -2,8 +2,8 @@
 
 namespace App\Commands;
 
-use App\Classes\Dto;
-use App\Classes\Telegram;
+use App\Classes\Lumen\Http\Dto;
+use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramCommand;
 
 class AboutCommand implements TelegramCommand
