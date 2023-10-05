@@ -66,7 +66,7 @@ class MovieSeeder extends Seeder
                     'poster_url'          => $movie['poster']['url'],
                     'backdrop_url'        => $movie['backdrop']['url'],
                     'year'                => $movie['year'],
-                    'age_rating'          => $movie['age_rating'],
+                    'age_rating'          => $movie['ageRating'],
                     'is_series'           => $movie['isSeries'],
                     'movie_length'        => $movie['movieLength'],
                     'series_length'       => $movie['seriesLength'],
