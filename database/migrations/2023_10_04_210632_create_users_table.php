@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->unsignedBigInteger('chat_id')->primary();
+            $table->unsignedTinyInteger('state');
             $table->dateTime('created_at')->nullable();
         });
     }
