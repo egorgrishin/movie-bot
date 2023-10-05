@@ -58,6 +58,7 @@ class MovieSeeder extends Seeder
             foreach ($json['docs'] as $movie) {
                 $movies[] = [
                     'id'                  => $id,
+                    'kp_id'               => $movie['kp_id'],
                     'type'                => $movie['type'],
                     'name'                => $movie['name'],
                     'description'         => $movie['description'],
