@@ -56,12 +56,14 @@ class MovieSeeder extends Seeder
             }
 
             foreach ($json['docs'] as $movie) {
+                $name = $this->removeNonBreakingSpaces($movie['name'] ?? $movie['alternativeName']);
+                $description = $this->removeNonBreakingSpaces($movie['description']);
                 $movies[] = [
                     'id'                  => $id,
                     'kp_id'               => $movie['id'],
                     'type'                => $movie['type'],
-                    'name'                => $movie['name'] ?? $movie['alternativeName'],
-                    'description'         => $movie['description'],
+                    'name'                => $name,
+                    'description'         => $description,
                     'kp_rating'           => $movie['rating']['kp'],
                     'kp_votes_count'      => $movie['votes']['kp'],
                     'poster_url'          => $movie['poster']['url'] ?? null,
@@ -147,11 +149,18 @@ class MovieSeeder extends Seeder
         foreach ($trailers as $trailer) {
             $data[] = [
                 'movie_id'   => $movie_id,
-                'name'       => $trailer['name'],
+                'name'       => $this->removeNonBreakingSpaces($trailer['name']),
                 'url'        => $trailer['url'],
             ];
         }
 
         return $data;
+    }
+
+    private function removeNonBreakingSpaces(?string $string): ?string
+    {
+        return $string
+            ? str_replace("\xC2\xA0", "", $string)
+            : null;
     }
 }
