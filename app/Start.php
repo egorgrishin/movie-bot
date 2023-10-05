@@ -17,6 +17,7 @@ class Start
 {
     public function __invoke(Request $request): void
     {
+        return;
         $this->messageIsCommand($request->dto->data)
             ? $this->runCommandHandler($request->dto)
             : $this->runStateHandler($request->dto);
