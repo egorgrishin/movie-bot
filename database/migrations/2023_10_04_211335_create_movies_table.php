@@ -37,7 +37,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('kp_id');
             $table->string('type', 63)->index();
-            $table->string('name', 511)->index();
+            $table->string('name', 511)->fulltext();
             $table->text('description')->nullable();
             $table->decimal('kp_rating', 5, 3)->nullable();
             $table->integer('kp_votes_count')->nullable();
