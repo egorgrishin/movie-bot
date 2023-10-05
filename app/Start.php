@@ -12,6 +12,7 @@ use App\Enums\Command;
 use App\Enums\State;
 use App\Handlers\FindMovieHandler;
 use App\Handlers\MenuHandler;
+use Illuminate\Support\Facades\DB;
 
 class Start
 {
@@ -36,9 +37,18 @@ class Start
 
     public function runStateHandler(Dto $dto): void
     {
+        $user = $this->getUserByChatId($dto->chat_id);
+
         /** @var TelegramCommand $handler */
-        $handler = new ($this->getStates()[$dto->data]);
+        $handler = new ($this->getStates()[$user->state]);
         $handler->run($dto);
+    }
+
+    private function getUserByChatId(int $chat_id): object
+    {
+        return DB::table('users')
+            ->where('chat_id', $chat_id)
+            ->first();
     }
 
     private function getCommands(): array

@@ -16,23 +16,31 @@ class MenuCommand implements TelegramCommand
         Telegram::send([
             'chat_id' => $dto->chat_id,
             'text'    => 'Выберите действие',
+//            'reply_markup' => [
+//                'inline_keyboard'   => [
+//                    [
+//                        [
+//                            'text'          => MenuButton::Find->value,
+//                            'callback_data' => MenuButton::Find->name,
+//                        ],
+//                    ],
+//                    [
+//                        [
+//                            'text'          => MenuButton::Match->value,
+//                            'callback_data' => MenuButton::Match->name,
+//                        ],
+//                    ],
+//                ],
+//                'one_time_keyboard' => true,
+//                'resize_keyboard'   => true,
+//            ],
             'reply_markup' => [
-                'inline_keyboard'   => [
-                    [
-                        [
-                            'text'          => MenuButton::Find->value,
-                            'callback_data' => MenuButton::Find->name,
-                        ],
-                    ],
-                    [
-                        [
-                            'text'          => MenuButton::Match->value,
-                            'callback_data' => MenuButton::Match->name,
-                        ],
-                    ],
+                'keyboard' => [
+                    [MenuButton::Find->value],
+                    [MenuButton::Match->value],
                 ],
                 'one_time_keyboard' => true,
-                'resize_keyboard'   => true,
+                'resize_keyboard' => true,
             ],
         ]);
         $this->setState($dto->chat_id);

@@ -2,7 +2,53 @@
 
 namespace App\Handlers;
 
+use App\Classes\Lumen\Http\Dto;
+use App\Classes\Telegram\Telegram;
+use App\Enums\MenuButton;
+use App\Enums\State;
+use Illuminate\Support\Facades\DB;
+
 class MenuHandler
 {
+    public function run(Dto $dto): void
+    {
+        if ($dto->data === MenuButton::Find->value) {
+            $this->findMovie($dto->chat_id);
+            return;
+        }
+        if ($dto->data === MenuButton::Match->value) {
+            $this->matchMovie($dto->chat_id);
+            return;
+        }
 
+        Telegram::send([
+            'chat_id' => $dto->chat_id,
+            'text'    => 'Некорректная команда(',
+        ]);
+    }
+
+    private function findMovie(int $chat_id): void
+    {
+        Telegram::send([
+            'chat_id' => $chat_id,
+            'text'    => 'Введите название фильма',
+        ]);
+        $this->setState($chat_id, State::FindMovie);
+    }
+
+    private function matchMovie(int $chat_id): void
+    {
+        Telegram::send([
+            'chat_id' => $chat_id,
+            'text'    => 'В разработке',
+        ]);
+        $this->setState($chat_id, State::MatchMovie);
+    }
+
+    private function setState(int $chat_id, State $state): void
+    {
+        DB::table('users')
+            ->where('chat_id', $chat_id)
+            ->update(['state' => $state->value]);
+    }
 }
