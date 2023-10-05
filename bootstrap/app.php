@@ -11,7 +11,7 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
-//$app->withFacades();
+$app->withFacades();
 //$app->withEloquent();
 
 $app->singleton(
@@ -25,9 +25,9 @@ $app->singleton(
 
 $app->configure('app');
 
-//$app->middleware([
-//    App\Http\Middleware\ExampleMiddleware::class
-//]);
+$app->middleware([
+    App\Middleware\LoggingRequest::class
+]);
 
-$app->register(\App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
 return $app;
