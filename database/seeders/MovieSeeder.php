@@ -64,8 +64,8 @@ class MovieSeeder extends Seeder
                     'description'         => $movie['description'],
                     'kp_rating'           => $movie['rating']['kp'],
                     'kp_votes_count'      => $movie['votes']['kp'],
-                    'poster_url'          => $movie['poster']['url'],
-                    'backdrop_url'        => $movie['backdrop']['url'],
+                    'poster_url'          => $movie['poster']['url'] ?? null,
+                    'backdrop_url'        => $movie['backdrop']['url'] ?? null,
                     'year'                => $movie['year'],
                     'age_rating'          => $movie['ageRating'],
                     'is_series'           => $movie['isSeries'],
@@ -86,14 +86,14 @@ class MovieSeeder extends Seeder
                 );
                 $trailers = array_merge(
                     $trailers,
-                    $this->getMovieTrailers($id, $movie['videos']['trailers'])
+                    $this->getMovieTrailers($id, $movie['videos']['trailers'] ?? [])
                 );
 
                 if (count($movies) == 100) {
-                    DB::table('movies')->insert($movies);
-                    DB::table('genre_movie')->insert($related_genres);
-                    DB::table('country_movie')->insert($related_countries);
-                    DB::table('trailers')->insert($trailers);
+//                    DB::table('movies')->insert($movies);
+//                    DB::table('genre_movie')->insert($related_genres);
+//                    DB::table('country_movie')->insert($related_countries);
+//                    DB::table('trailers')->insert($trailers);
                     $movies = [];
                     $related_genres = [];
                     $related_countries = [];
