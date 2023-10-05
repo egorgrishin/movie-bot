@@ -6,6 +6,8 @@ use App\Classes\Lumen\Http\Dto;
 use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramCommand;
 use App\Enums\MenuButton;
+use App\Enums\State;
+use Illuminate\Support\Facades\DB;
 
 class MenuCommand implements TelegramCommand
 {
@@ -33,5 +35,13 @@ class MenuCommand implements TelegramCommand
                 'resize_keyboard'   => true,
             ],
         ]);
+        $this->setState($dto->chat_id);
+    }
+
+    private function setState(int $chat_id): void
+    {
+        DB::table('users')
+            ->where('chat_id', $chat_id)
+            ->update(['state' => State::Menu->value]);
     }
 }

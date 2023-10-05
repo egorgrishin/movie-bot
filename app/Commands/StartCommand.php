@@ -12,7 +12,9 @@ class StartCommand implements TelegramCommand
     {
         Telegram::send([
             'chat_id' => $dto->chat_id,
-            'text'    => 'Это тестовое сообщение',
+            'text'    => 'Привет, 🐰!',
         ]);
+        $menu = new MenuCommand();
+        $menu->run($dto);
     }
 }
