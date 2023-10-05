@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\State;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->unsignedBigInteger('chat_id')->primary();
-            $table->unsignedTinyInteger('state');
+            $table->unsignedTinyInteger('state')->default(State::Menu->value);
             $table->dateTime('created_at')->nullable();
         });
     }
