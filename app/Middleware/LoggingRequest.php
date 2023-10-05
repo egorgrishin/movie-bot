@@ -12,7 +12,6 @@ class LoggingRequest
      */
     public function handle( $request, Closure $next): mixed
     {
-        dd($request);
         Log::debug(var_export($request->all(), true));
         return $next($request);
     }
