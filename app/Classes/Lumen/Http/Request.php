@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes;
+namespace App\Classes\Lumen\Http;
 
 use Laravel\Lumen\Http\Request as LumenRequest;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;

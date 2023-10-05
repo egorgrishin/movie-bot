@@ -1,7 +1,5 @@
 <?php
 
-use App\Classes\Request;
-
 require_once __DIR__.'/../vendor/autoload.php';
 
 (new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
@@ -9,7 +7,7 @@ require_once __DIR__.'/../vendor/autoload.php';
 ))->bootstrap();
 date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
 
-$app = new Laravel\Lumen\Application(
+$app = new \App\Classes\Lumen\Application(
     dirname(__DIR__)
 );
 
@@ -32,5 +30,5 @@ $app->middleware([
 ]);
 
 $app->register(App\Providers\AppServiceProvider::class);
-$app->bind(Request::class, fn () => Request::capture());
+
 return $app;

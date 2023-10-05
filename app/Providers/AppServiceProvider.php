@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Classes\Request;
+use App\Classes\Lumen\Http\Request;
 use App\Start;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-//        $this->app->bind(Request::class, fn () => Request::capture());
+        $this->app->bind(Request::class, fn () => Request::capture());
         $this->app->router->get(
             env('BOT_ROUTE'),
             ['uses' => Start::class]
