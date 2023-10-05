@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class CountrySeeder extends Seeder
 {
@@ -11,6 +12,17 @@ class CountrySeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('countries')->insert(
+            $this->getCountries()
+        );
+    }
+
+    /**
+     * Возвращает список стран для вставки в базу данных
+     */
+    private function getCountries(): array
+    {
+        $data = [];
         $countries = [];
         $i = 1;
 
@@ -29,11 +41,14 @@ class CountrySeeder extends Seeder
                 foreach ($movie_countries as $country) {
                     if (!in_array($country, $countries)) {
                         $countries[] = $country;
+                        $data[] = ['name' => $country];
                     }
                 }
             }
 
             $i++;
         }
+
+        return $data;
     }
 }
