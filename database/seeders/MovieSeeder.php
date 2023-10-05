@@ -160,7 +160,7 @@ class MovieSeeder extends Seeder
     private function removeNonBreakingSpaces(?string $string): ?string
     {
         return $string
-            ? str_replace("\xC2\xA0", "", $string)
+            ? str_replace("\xC2\xA0", ' ', $string)
             : null;
     }
 }
