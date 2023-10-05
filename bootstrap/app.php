@@ -1,5 +1,7 @@
 <?php
 
+use App\Classes\Request;
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 (new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
@@ -30,4 +32,5 @@ $app->middleware([
 ]);
 
 $app->register(App\Providers\AppServiceProvider::class);
+$app->bind(Request::class, fn () => Request::capture());
 return $app;

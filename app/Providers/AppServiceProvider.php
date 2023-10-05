@@ -17,7 +17,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->app->bind(Request::class, fn () => Request::capture());
+//        $this->app->bind(Request::class, fn () => Request::capture());
+        $this->app->router->get(
+            env('BOT_ROUTE'),
+            ['uses' => Start::class]
+        );
         $this->app->router->post(
             env('BOT_ROUTE'),
             ['uses' => Start::class]
