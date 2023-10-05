@@ -60,7 +60,7 @@ class MovieSeeder extends Seeder
                     'id'                  => $id,
                     'kp_id'               => $movie['id'],
                     'type'                => $movie['type'],
-                    'name'                => $movie['name'],
+                    'name'                => $movie['name'] ?? $movie['alternativeName'],
                     'description'         => $movie['description'],
                     'kp_rating'           => $movie['rating']['kp'],
                     'kp_votes_count'      => $movie['votes']['kp'],
