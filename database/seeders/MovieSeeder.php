@@ -76,20 +76,21 @@ class MovieSeeder extends Seeder
                     'updated_at'          => $now,
                 ];
 
-                $related_genres[] = array_merge(
+                $related_genres = array_merge(
                     $related_genres,
                     $this->getMovieGenres($id, $genres, $movie['genres'])
                 );
-                $related_countries[] = array_merge(
+                $related_countries = array_merge(
                     $related_countries,
                     $this->getMovieGenres($id, $genres, $movie['genres'])
                 );
-                $trailers[] = array_merge(
+                $trailers = array_merge(
                     $trailers,
                     $this->getMovieGenres($id, $genres, $movie['genres'])
                 );
 
                 if (count($movies) == 100) {
+                    dd($related_genres);
                     DB::table('movies')->insert($movies);
                     DB::table('genre_movie')->insert($related_genres);
                     DB::table('country_movie')->insert($related_countries);
