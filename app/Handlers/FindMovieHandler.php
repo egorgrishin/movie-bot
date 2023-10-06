@@ -19,12 +19,12 @@ class FindMovieHandler implements TelegramHandler
         if ($this->isAction($dto->data)) {
             $data = json_decode($dto->data, true);
 
-            if (array_key_exists('film_id', $data)) {
+            if (array_key_exists('id', $data)) {
                 $this->showFilm($dto, $data);
                 return;
             }
 
-            $page = (int) $data['page'];
+            $page = (int) $data['pg'];
             $message_id = $data['message_id'];
             $message = DB::table('messages')
                 ->where('chat_id', $dto->chat_id)
@@ -32,6 +32,7 @@ class FindMovieHandler implements TelegramHandler
                 ->first();
             $search = $message->text;
         }
+
 
         if ($message_id === null) {
             $message_id = json_decode(Telegram::send([
@@ -83,10 +84,10 @@ class FindMovieHandler implements TelegramHandler
             $buttons[] = [[
                 'text'          => $film->name,
                 'callback_data' => json_encode([
-                    'page'       => $page,
-                    'film_id'    => $film->id,
-                    'message_id' => $message_id,
-                    'show_desc'  => false,
+                    'pg'       => $page,
+                    'id'    => $film->id,
+                    'mid' => $message_id,
+                    'sd'  => false,
                 ]),
             ]];
         }
@@ -96,8 +97,8 @@ class FindMovieHandler implements TelegramHandler
             $navigation[] = [
                 'text'          => 'Назад',
                 'callback_data' => json_encode([
-                    'page'       => $page - 1,
-                    'message_id' => $message_id,
+                    'pg'       => $page - 1,
+                    'mid' => $message_id,
                 ]),
             ];
         }
@@ -110,8 +111,8 @@ class FindMovieHandler implements TelegramHandler
             $navigation[] = [
                 'text'          => 'Вперед',
                 'callback_data' => json_encode([
-                    'page'       => $page + 1,
-                    'message_id' => $message_id,
+                    'pg'       => $page + 1,
+                    'mid' => $message_id,
                 ])
             ];
         }
@@ -123,11 +124,11 @@ class FindMovieHandler implements TelegramHandler
 
     private function showFilm(Dto $dto, array $data): void
     {
-        $film_id = $data['film_id'];
-        $message_id = $data['message_id'];
+        $film_id = $data['id'];
+        $message_id = $data['mid'];
 
-        if (array_key_exists('action', $data)) {
-            $action = $data['action'];
+        if (array_key_exists('ac', $data)) {
+            $action = $data['ac'];
             if (strpos($action, 'like:') !== false) {
                 if (strpos($action, 'create') !== null) {
                     DB::table('movie_user')->insert([
@@ -172,7 +173,7 @@ class FindMovieHandler implements TelegramHandler
         $backdrop = $movie->backdrop_url ? "<a href=\"$movie->backdrop_url\">&#8205;</a>" : '';
         $image = $poster ?: $backdrop;
 
-        $desc = $data['show_desc'] ? "\n\n" . $movie->description : '';
+        $desc = $data['sd'] ? "\n\n" . $movie->description : '';
 
         $message = <<<HTML
         <b>$movie->name</b>
@@ -187,9 +188,9 @@ class FindMovieHandler implements TelegramHandler
         $desc
         HTML;
 
-        Telegram::update([
+        dd(Telegram::update([
             'chat_id' => $dto->chat_id,
-            'message_id' => $data['message_id'],
+            'mid' => $data['mid'],
             'text'    => $message,
             'parse_mode' => 'HTML',
             'disable_web_page_preview' => false,
@@ -199,28 +200,28 @@ class FindMovieHandler implements TelegramHandler
                         [
                             'text'          => 'Назад',
                             'callback_data' => json_encode([
-                                'page'       => $data['page'],
-                                'message_id' => $message_id,
+                                'pg'       => $data['pg'],
+                                'mid' => $message_id,
                             ]),
                         ],
                         [
-                            'text'          => ($data['show_desc'] ? 'Скрыть' : 'Показать') . ' описание',
+                            'text'          => ($data['sd'] ? 'Скрыть' : 'Показать') . ' описание',
                             'callback_data' => json_encode([
-                                'page'       => $data['page'],
-                                'film_id'    => $film_id,
-                                'message_id' => $message_id,
-                                'show_desc'  => !$data['show_desc'],
+                                'pg'       => $data['pg'],
+                                'id'    => $film_id,
+                                'mid' => $message_id,
+                                'sd'  => !$data['sd'],
                             ]),
                         ],
                     ],
                     [
                         [
-                            'text'          => $is_like ? 'Добавить в мои фильмы' : 'Удалить из моих фильмов',
+                            'text'          => $is_like ? 'Добавить' : 'Удалить',
                             'callback_data' => json_encode([
-                                'action'     => 'like:' . ($is_like ? 'delete' : 'create'),
-                                'film_id'    => $film_id,
-                                'message_id' => $message_id,
-                                'show_desc'  => $data['show_desc'],
+                                'ac'     => 'like:' . ($is_like ? 'dl' : 'cr'),
+                                'id'    => $film_id,
+                                'mid' => $message_id,
+                                'sd'  => $data['sd'],
                             ]),
                         ],
                     ]
@@ -228,6 +229,6 @@ class FindMovieHandler implements TelegramHandler
                 'one_time_keyboard' => true,
                 'resize_keyboard'   => true,
             ],
-        ]);
+        ])->body());
     }
 }
