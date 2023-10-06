@@ -131,10 +131,16 @@ class FindMovieHandler implements TelegramHandler
             $action = $data['ac'];
             if (strpos($action, 'like:') !== false) {
                 if (strpos($action, 'cr') !== false) {
-                    DB::table('movie_user')->insert([
-                        'movie_id' => $film_id,
-                        'user_id' => $dto->chat_id,
-                    ]);
+                    $is_like = DB::table('movie_user')
+                        ->where('movie_id', $film_id)
+                        ->where('user_id', $dto->chat_id)
+                        ->exists();
+                    if (!$is_like) {
+                        DB::table('movie_user')->insert([
+                            'movie_id' => $film_id,
+                            'user_id' => $dto->chat_id,
+                        ]);
+                    }
                 } else {
                     DB::table('movie_user')
                         ->where('movie_id', $film_id)
