@@ -13,24 +13,30 @@ class FindMovieHandler implements TelegramHandler
 {
     public function run(Dto $dto): void
     {
-        $user = $this->getUser($dto->chat_id);
         $page = 1;
         $search = $dto->data;
         $message_id = null;
         if ($this->isAction($dto->data)) {
             $data = json_decode($dto->data, true);
             $page = (int) $data['page'];
-            $search = $user->last_message;
             $message_id = $data['message_id'];
+            $message = DB::table('messages')
+                ->where('chat_id', $dto->chat_id)
+                ->where('tg_message_id', $data['message_id'])
+                ->first();
+            $search = $message->text;
         }
-
-//        dd($page, $search, $message_id);
 
         if ($message_id === null) {
             $message_id = json_decode(Telegram::send([
                 'chat_id' => $dto->chat_id,
                 'text'   => 'Выбери фильм',
             ])->body(), true)['result']['message_id'];
+            DB::table('messages')->insert([
+                'chat_id' => $dto->chat_id,
+                'tg_message_id' => $message_id,
+                'text' => $search,
+            ]);
         }
 
         $buttons = $this->getButtons(
