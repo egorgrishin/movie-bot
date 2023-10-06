@@ -10,7 +10,6 @@ use App\Commands\StartCommand;
 use App\Contracts\TelegramCommand;
 use App\Enums\Command;
 use App\Enums\State;
-use App\Handlers\EnterFilmNameHandler;
 use App\Handlers\FindMovieHandler;
 use App\Handlers\MenuHandler;
 use Illuminate\Support\Facades\DB;
@@ -69,7 +68,6 @@ class Start
             State::Menu->value          => MenuHandler::class,
             State::FindMovie->value     => FindMovieHandler::class,
             State::MatchMovie->value    => FindMovieHandler::class,
-            State::EnterFilmName->value => EnterFilmNameHandler::class,
         ];
     }
 }
