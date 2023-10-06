@@ -26,8 +26,14 @@ class MenuCommand implements TelegramCommand
                     ],
                     [
                         [
-                            'text'          => MenuButton::Match->value,
-                            'callback_data' => MenuButton::Match->name,
+                            'text'          => MenuButton::Find->value,
+                            'callback_data' => MenuButton::Find->name,
+                        ],
+                    ],
+                    [
+                        [
+                            'text'          => MenuButton::Wish->value,
+                            'callback_data' => MenuButton::Wish->name,
                         ],
                     ],
                 ],

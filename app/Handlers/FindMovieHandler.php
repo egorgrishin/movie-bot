@@ -126,6 +126,23 @@ class FindMovieHandler implements TelegramHandler
         $film_id = $data['film_id'];
         $message_id = $data['message_id'];
 
+        if (array_key_exists('action', $data)) {
+            $action = $data['action'];
+            if (strpos($action, 'like:') !== false) {
+                if (strpos($action, 'create') !== null) {
+                    DB::table('movie_user')->insert([
+                        'movie_id' => $film_id,
+                        'user_id' => $dto->chat_id,
+                    ]);
+                } else {
+                    DB::table('movie_user')
+                        ->where('movie_id', $film_id)
+                        ->where('user_id', $dto->chat_id)
+                        ->delete();
+                }
+            }
+        }
+
         $movie = DB::table('movies')
             ->where('id', $film_id)
             ->first();
@@ -140,6 +157,12 @@ class FindMovieHandler implements TelegramHandler
             ->get()
             ->pluck('name')
             ->join(', ');
+
+        $is_like = DB::table('movie_user')
+            ->where('movie_id', $film_id)
+            ->where('user_id', $dto->chat_id)
+            ->exists();
+
         $genres = $genres ?: 'не указаны';
 
         $year = $movie->year ?: 'не указан';
@@ -171,24 +194,37 @@ class FindMovieHandler implements TelegramHandler
             'parse_mode' => 'HTML',
             'disable_web_page_preview' => false,
             'reply_markup' => [
-                'inline_keyboard'   => [[
+                'inline_keyboard'   => [
                     [
-                        'text'          => 'Назад',
-                        'callback_data' => json_encode([
-                            'page'       => $data['page'],
-                            'message_id' => $message_id,
-                        ]),
+                        [
+                            'text'          => 'Назад',
+                            'callback_data' => json_encode([
+                                'page'       => $data['page'],
+                                'message_id' => $message_id,
+                            ]),
+                        ],
+                        [
+                            'text'          => ($data['show_desc'] ? 'Скрыть' : 'Показать') . ' описание',
+                            'callback_data' => json_encode([
+                                'page'       => $data['page'],
+                                'film_id'    => $film_id,
+                                'message_id' => $message_id,
+                                'show_desc'  => !$data['show_desc'],
+                            ]),
+                        ],
                     ],
                     [
-                        'text'          => ($data['show_desc'] ? 'Скрыть' : 'Показать') . ' описание',
-                        'callback_data' => json_encode([
-                            'page'       => $data['page'],
-                            'film_id'    => $film_id,
-                            'message_id' => $message_id,
-                            'show_desc'  => !$data['show_desc'],
-                        ]),
-                    ],
-                ]],
+                        [
+                            'text'          => $is_like ? 'Добавить в мои фильмы' : 'Удалить из моих фильмов',
+                            'callback_data' => json_encode([
+                                'action'     => 'like:' . ($is_like ? 'delete' : 'create'),
+                                'film_id'    => $film_id,
+                                'message_id' => $message_id,
+                                'show_desc'  => $data['show_desc'],
+                            ]),
+                        ],
+                    ]
+                ],
                 'one_time_keyboard' => true,
                 'resize_keyboard'   => true,
             ],

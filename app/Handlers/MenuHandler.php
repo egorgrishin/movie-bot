@@ -6,6 +6,7 @@ use App\Classes\Lumen\Http\Dto;
 use App\Classes\Telegram\Telegram;
 use App\Enums\MenuButton;
 use App\Enums\State;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 class MenuHandler
@@ -18,6 +19,10 @@ class MenuHandler
         }
         if ($dto->data === MenuButton::Match->name) {
             $this->matchMovie($dto->chat_id);
+            return;
+        }
+        if ($dto->data === MenuButton::Wish->name) {
+            $this->wishMovies($dto->chat_id);
             return;
         }
 
@@ -42,6 +47,24 @@ class MenuHandler
         Telegram::send([
             'chat_id' => $chat_id,
             'text'    => 'В разработке',
+        ]);
+    }
+
+    private function wishMovies(int $chat_id): void
+    {
+        $movies = DB::table('movies')
+            ->whereExists(function (Builder $query) use ($chat_id) {
+                $query->select(DB::raw(1))
+                    ->from('movie_user')
+                    ->where('user_id', $chat_id)
+                    ->whereColumn('movies.id', 'movie_user.movie_id');
+            })
+            ->get()
+            ->pluck('name')
+            ->join("\n");
+        Telegram::send([
+            'chat_id' => $chat_id,
+            'text'    => $movies,
         ]);
     }
 
