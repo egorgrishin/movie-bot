@@ -190,7 +190,7 @@ class FindMovieHandler implements TelegramHandler
 
         dd(Telegram::update([
             'chat_id' => $dto->chat_id,
-            'mid' => $data['mid'],
+            'message_id' => $data['mid'],
             'text'    => $message,
             'parse_mode' => 'HTML',
             'disable_web_page_preview' => false,
