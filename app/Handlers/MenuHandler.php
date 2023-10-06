@@ -29,20 +29,20 @@ class MenuHandler
 
     private function findMovie(int $chat_id): void
     {
+        $this->setState($chat_id, State::FindMovie);
         Telegram::send([
             'chat_id' => $chat_id,
             'text'    => 'Введите название фильма',
         ]);
-        $this->setState($chat_id, State::FindMovie);
     }
 
     private function matchMovie(int $chat_id): void
     {
+        $this->setState($chat_id, State::MatchMovie);
         Telegram::send([
             'chat_id' => $chat_id,
             'text'    => 'В разработке',
         ]);
-        $this->setState($chat_id, State::MatchMovie);
     }
 
     private function setState(int $chat_id, State $state): void
