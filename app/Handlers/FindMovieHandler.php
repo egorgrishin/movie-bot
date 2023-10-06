@@ -49,7 +49,7 @@ class FindMovieHandler implements TelegramHandler
         $buttons = $this->getButtons(
             $message_id, $page, $search, $this->getFilms($page, $search)
         );
-        dd(Telegram::update([
+        Telegram::update([
             'text'    => 'Выбери фильм',
             'chat_id' => $dto->chat_id,
             'message_id' => $message_id,
@@ -58,7 +58,7 @@ class FindMovieHandler implements TelegramHandler
                 'one_time_keyboard' => true,
                 'resize_keyboard'   => true,
             ],
-        ])->body(), $buttons);
+        ]);
 //        dd($buttons);
     }
 
@@ -188,7 +188,7 @@ class FindMovieHandler implements TelegramHandler
         $desc
         HTML;
 
-        dd(Telegram::update([
+        Telegram::update([
             'chat_id' => $dto->chat_id,
             'message_id' => $data['mid'],
             'text'    => $message,
@@ -230,11 +230,6 @@ class FindMovieHandler implements TelegramHandler
                 'one_time_keyboard' => true,
                 'resize_keyboard'   => true,
             ],
-        ])->body(), json_encode([
-            'pg'       => $data['pg'],
-            'id'    => $film_id,
-            'mid' => $message_id,
-            'sd'  => !$data['sd'],
-        ]));
+        ]);
     }
 }
