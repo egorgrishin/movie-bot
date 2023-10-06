@@ -6,6 +6,7 @@ use App\Classes\Lumen\Http\Dto;
 use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramHandler;
 use App\Enums\State;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -18,6 +19,12 @@ class FindMovieHandler implements TelegramHandler
         $message_id = null;
         if ($this->isAction($dto->data)) {
             $data = json_decode($dto->data, true);
+
+            if (array_key_exists('film_id', $data)) {
+                $this->showFilm($dto, $data);
+                return;
+            }
+
             $page = (int) $data['page'];
             $message_id = $data['message_id'];
             $message = DB::table('messages')
@@ -51,15 +58,7 @@ class FindMovieHandler implements TelegramHandler
                 'resize_keyboard'   => true,
             ],
         ]);
-        $this->setState($dto->chat_id, $search);
-//        dd($buttons[5]);
-    }
-
-    private function getUser(int $chat_id): object
-    {
-        return DB::table('users')
-            ->where('chat_id', $chat_id)
-            ->first();
+        dd($buttons);
     }
 
     private function isAction(string $data): bool
@@ -87,6 +86,7 @@ class FindMovieHandler implements TelegramHandler
                     'page'       => $page,
                     'film_id'    => $film->id,
                     'message_id' => $message_id,
+                    'show_desc'  => false,
                 ]),
             ]];
         }
@@ -121,12 +121,84 @@ class FindMovieHandler implements TelegramHandler
         return $buttons;
     }
 
-    private function setState(int $chat_id, string $message): void
+    private function showFilm(Dto $dto, array $data): void
+    {
+        $film_id = $data['film_id'];
+        $message_id = $data['message_id'];
+
+        $movie = DB::table('movies')
+            ->where('id', $film_id)
+            ->first();
+
+        $genres = DB::table('genres')
+            ->whereExists(function (Builder $query) use ($film_id) {
+                $query->select(DB::raw(1))
+                    ->from('genre_movie')
+                    ->where('genre_id', $film_id)
+                    ->whereColumn('genres.id', 'genre_movie.genre_id');
+            })
+            ->get()
+            ->pluck('name')
+            ->join(', ');
+        $genres = $genres ?: 'не указаны';
+
+        $year = $movie->year ?: 'не указан';
+        $age_rating = ($movie->age_rating . '+') ?: 'не указаны';
+
+        $poster = $movie->poster_url ? "<a href=\"$movie->poster_url\">&#8205;</a>" : null;
+        $backdrop = $movie->backdrop_url ? "<a href=\"$movie->backdrop_url\">&#8205;</a>" : '';
+        $image = $poster ?: $backdrop;
+
+        $desc = $data['show_desc'] ? "\n\n" . $movie->description : '';
+
+        $message = <<<HTML
+        <b>$movie->name</b>
+
+        Жанры: $genres
+        Тип: $movie->type
+        Рейтинг: $movie->kp_rating
+        Количество оценок: $movie->kp_votes_count
+        Год: $year
+        Возрастные ограничения: $age_rating
+        $image
+        $desc
+        HTML;
+
+        dd(json_decode(Telegram::send([
+            'chat_id' => $dto->chat_id,
+            'text'    => $message,
+            'parse_mode' => 'HTML',
+            'disable_web_page_preview' => false,
+            'reply_markup' => [
+                'inline_keyboard'   => [[
+                    [
+                        'text'          => 'Назад',
+                        'callback_data' => json_encode([
+                            'page'       => $data['page'],
+                            'film_id'    => $film_id,
+                            'message_id' => $message_id,
+                        ]),
+                    ],
+                    [
+                        'text'          => ($data['show_desc'] ? 'Скрыть' : 'Показать') . ' описание',
+                        'callback_data' => json_encode([
+                            'page'       => $data['page'],
+                            'film_id'    => $film_id,
+                            'message_id' => $message_id,
+                            'show_desc'  => !$data['show_desc'],
+                        ]),
+                    ],
+                ]],
+                'one_time_keyboard' => true,
+                'resize_keyboard'   => true,
+            ],
+        ])->body(), true));
+    }
+
+    private function setState(int $chat_id): void
     {
         DB::table('users')
             ->where('chat_id', $chat_id)
-            ->update([
-                'last_message' => $message,
-            ]);
+            ->update(['state' => State::ShowMovie->value]);
     }
 }

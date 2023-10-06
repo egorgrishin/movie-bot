@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('tg_message_id')->index();
             $table->text('text');
 
-            $table->unique('chat_id', 'tg_message_id');
+            $table->unique(['chat_id', 'tg_message_id']);
         });
     }
 
