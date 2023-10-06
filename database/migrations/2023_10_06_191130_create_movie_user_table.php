@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('movie_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('movie_id')->constrained();
-            $table->foreignId('user_id')->constrained('users', 'chat_id');
+            $table->foreignId('movie_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->foreignId('user_id')
+                ->constrained('users', 'chat_id')
+                ->cascadeOnDelete();
+
+            $table->unique(['movie_id', 'user_id']);
         });
     }
 
