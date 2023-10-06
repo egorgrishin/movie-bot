@@ -113,7 +113,7 @@ class FindMovieHandler implements TelegramHandler
         $navigation = [];
         if ($page > 1) {
             $navigation[] = [
-                'text'          => 'Назад',
+                'text'          => '◀️',
                 'callback_data' => json_encode([
                     'pg'       => $page - 1,
                     'mid' => $message_id,
@@ -131,7 +131,7 @@ class FindMovieHandler implements TelegramHandler
             ->count();
         if ($c < $total) {
             $navigation[] = [
-                'text'          => 'Вперед',
+                'text'          => '▶️',
                 'callback_data' => json_encode([
                     'pg'       => $page + 1,
                     'mid' => $message_id,
@@ -226,7 +226,7 @@ class FindMovieHandler implements TelegramHandler
                 'inline_keyboard'   => [
                     [
                         [
-                            'text'          => 'Назад',
+                            'text'          => '↩️',
                             'callback_data' => json_encode([
                                 'pg'       => $data['pg'],
                                 'mid' => $message_id,
