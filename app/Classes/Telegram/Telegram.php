@@ -14,6 +14,12 @@ class Telegram
         return Http::post(self::URL . "/bot$token/sendMessage", $data);
     }
 
+    public static function update(array $data)
+    {
+        $token = env('BOT_TOKEN');
+        return Http::post(self::URL . "/bot$token/editMessageText", $data);
+    }
+
     public static function setKeyboard(array $data)
     {
         $token = env('BOT_TOKEN');

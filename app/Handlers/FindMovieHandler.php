@@ -5,7 +5,6 @@ namespace App\Handlers;
 use App\Classes\Lumen\Http\Dto;
 use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramHandler;
-use App\Enums\State;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -49,7 +48,8 @@ class FindMovieHandler implements TelegramHandler
         $buttons = $this->getButtons(
             $message_id, $page, $search, $this->getFilms($page, $search)
         );
-        Telegram::setKeyboard([
+        Telegram::update([
+            'text'    => 'Выбери фильм',
             'chat_id' => $dto->chat_id,
             'message_id' => $message_id,
             'reply_markup' => [
@@ -58,7 +58,7 @@ class FindMovieHandler implements TelegramHandler
                 'resize_keyboard'   => true,
             ],
         ]);
-        dd($buttons);
+//        dd($buttons);
     }
 
     private function isAction(string $data): bool
@@ -164,8 +164,9 @@ class FindMovieHandler implements TelegramHandler
         $desc
         HTML;
 
-        dd(json_decode(Telegram::send([
+        Telegram::update([
             'chat_id' => $dto->chat_id,
+            'message_id' => $data['message_id'],
             'text'    => $message,
             'parse_mode' => 'HTML',
             'disable_web_page_preview' => false,
@@ -175,7 +176,6 @@ class FindMovieHandler implements TelegramHandler
                         'text'          => 'Назад',
                         'callback_data' => json_encode([
                             'page'       => $data['page'],
-                            'film_id'    => $film_id,
                             'message_id' => $message_id,
                         ]),
                     ],
@@ -192,13 +192,6 @@ class FindMovieHandler implements TelegramHandler
                 'one_time_keyboard' => true,
                 'resize_keyboard'   => true,
             ],
-        ])->body(), true));
-    }
-
-    private function setState(int $chat_id): void
-    {
-        DB::table('users')
-            ->where('chat_id', $chat_id)
-            ->update(['state' => State::ShowMovie->value]);
+        ]);
     }
 }
