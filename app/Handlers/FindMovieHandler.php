@@ -72,9 +72,14 @@ class FindMovieHandler implements TelegramHandler
     private function getFilms(int $page, string $search): Collection
     {
         return DB::table('movies')
-            ->select('id', 'name')
+            ->select([
+                'id',
+                'name',
+                DB::raw('kp_rating * kp_votes_count as rating')
+            ])
             ->whereFullText('name', $search)
             ->forPage($page, 10)
+            ->orderByDesc('rating')
             ->get();
     }
 
