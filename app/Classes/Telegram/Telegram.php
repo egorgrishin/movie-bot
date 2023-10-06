@@ -8,9 +8,15 @@ class Telegram
 {
     private const URL = 'https://api.telegram.org';
 
-    public static function send(array $data): void
+    public static function send(array $data)
     {
         $token = env('BOT_TOKEN');
-        Http::post(self::URL . "/bot$token/sendMessage", $data);
+        return Http::post(self::URL . "/bot$token/sendMessage", $data);
+    }
+
+    public static function setKeyboard(array $data)
+    {
+        $token = env('BOT_TOKEN');
+        return Http::post(self::URL . "/bot$token/editMessageReplyMarkup", $data);
     }
 }

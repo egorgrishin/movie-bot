@@ -12,11 +12,11 @@ class MenuHandler
 {
     public function run(Dto $dto): void
     {
-        if ($dto->data === MenuButton::Find->value) {
+        if ($dto->data === MenuButton::Find->name) {
             $this->findMovie($dto->chat_id);
             return;
         }
-        if ($dto->data === MenuButton::Match->value) {
+        if ($dto->data === MenuButton::Match->name) {
             $this->matchMovie($dto->chat_id);
             return;
         }

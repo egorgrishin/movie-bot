@@ -10,6 +10,7 @@ use App\Commands\StartCommand;
 use App\Contracts\TelegramCommand;
 use App\Enums\Command;
 use App\Enums\State;
+use App\Handlers\EnterFilmNameHandler;
 use App\Handlers\FindMovieHandler;
 use App\Handlers\MenuHandler;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,8 @@ class Start
     {
         if ($this->messageIsCommand($request->dto->data)) {
             $this->runCommandHandler($request->dto);
+        } else {
+            $this->runStateHandler($request->dto);
         }
     }
 
@@ -63,8 +66,10 @@ class Start
     private function getStates(): array
     {
         return [
-            State::Menu->name      => MenuHandler::class,
-            State::FindMovie->name => FindMovieHandler::class,
+            State::Menu->value          => MenuHandler::class,
+            State::FindMovie->value     => FindMovieHandler::class,
+            State::MatchMovie->value    => FindMovieHandler::class,
+            State::EnterFilmName->value => EnterFilmNameHandler::class,
         ];
     }
 }
