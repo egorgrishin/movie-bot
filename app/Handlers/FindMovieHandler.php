@@ -120,6 +120,10 @@ class FindMovieHandler implements TelegramHandler
                 ]),
             ];
         }
+        $navigation[] = [
+            'text'          => 'Меню',
+            'callback_data' => '/menu',
+        ];
         $c = $page * 10;
         $total = DB::table('movies')
             ->select('id', 'name')
