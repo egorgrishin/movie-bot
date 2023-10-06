@@ -25,10 +25,10 @@ class FindMovieHandler implements TelegramHandler
             }
 
             $page = (int) $data['pg'];
-            $message_id = $data['message_id'];
+            $message_id = $data['mid'];
             $message = DB::table('messages')
                 ->where('chat_id', $dto->chat_id)
-                ->where('tg_message_id', $data['message_id'])
+                ->where('tg_message_id', $data['mid'])
                 ->first();
             $search = $message->text;
         }
@@ -49,7 +49,7 @@ class FindMovieHandler implements TelegramHandler
         $buttons = $this->getButtons(
             $message_id, $page, $search, $this->getFilms($page, $search)
         );
-        Telegram::update([
+        dd(Telegram::update([
             'text'    => 'Выбери фильм',
             'chat_id' => $dto->chat_id,
             'message_id' => $message_id,
@@ -58,7 +58,7 @@ class FindMovieHandler implements TelegramHandler
                 'one_time_keyboard' => true,
                 'resize_keyboard'   => true,
             ],
-        ]);
+        ])->body(), $buttons);
 //        dd($buttons);
     }
 
@@ -130,7 +130,7 @@ class FindMovieHandler implements TelegramHandler
         if (array_key_exists('ac', $data)) {
             $action = $data['ac'];
             if (strpos($action, 'like:') !== false) {
-                if (strpos($action, 'create') !== null) {
+                if (strpos($action, 'cr') !== false) {
                     DB::table('movie_user')->insert([
                         'movie_id' => $film_id,
                         'user_id' => $dto->chat_id,
@@ -216,9 +216,10 @@ class FindMovieHandler implements TelegramHandler
                     ],
                     [
                         [
-                            'text'          => $is_like ? 'Добавить' : 'Удалить',
+                            'text'          => $is_like ? 'Удалить' : 'Добавить',
                             'callback_data' => json_encode([
                                 'ac'     => 'like:' . ($is_like ? 'dl' : 'cr'),
+                                'pg'       => $data['pg'],
                                 'id'    => $film_id,
                                 'mid' => $message_id,
                                 'sd'  => $data['sd'],
@@ -229,6 +230,11 @@ class FindMovieHandler implements TelegramHandler
                 'one_time_keyboard' => true,
                 'resize_keyboard'   => true,
             ],
-        ])->body());
+        ])->body(), json_encode([
+            'pg'       => $data['pg'],
+            'id'    => $film_id,
+            'mid' => $message_id,
+            'sd'  => !$data['sd'],
+        ]));
     }
 }
