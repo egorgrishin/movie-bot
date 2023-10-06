@@ -5,6 +5,7 @@ namespace App\Handlers;
 use App\Classes\Lumen\Http\Dto;
 use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramHandler;
+use App\Enums\Number;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -73,19 +74,31 @@ class FindMovieHandler implements TelegramHandler
         return DB::table('movies')
             ->select('id', 'name')
             ->whereFullText('name', $search)
-            ->forPage($page, 5)
+            ->forPage($page, 10)
             ->get();
     }
 
     private function getButtons(int $message_id, int $page, string $search, Collection $films): array
     {
+        $nums = [
+            Number::One->value,
+            Number::Two->value,
+            Number::Three->value,
+            Number::Four->value,
+            Number::Five->value,
+            Number::Six->value,
+            Number::Seven->value,
+            Number::Eight->value,
+            Number::Nine->value,
+            Number::Ten->value,
+        ];
         $buttons = [];
-        foreach ($films as $film) {
+        for ($i = 0; $i < $films->count(); $i++) {
             $buttons[] = [[
-                'text'          => $film->name,
+                'text'          => $nums[$i] . ' ' . $films[$i]->name,
                 'callback_data' => json_encode([
                     'pg'       => $page,
-                    'id'    => $film->id,
+                    'id'    => $films[$i]->id,
                     'mid' => $message_id,
                     'sd'  => false,
                 ]),
@@ -102,7 +115,7 @@ class FindMovieHandler implements TelegramHandler
                 ]),
             ];
         }
-        $c = $page * 5;
+        $c = $page * 10;
         $total = DB::table('movies')
             ->select('id', 'name')
             ->whereFullText('name', $search)
