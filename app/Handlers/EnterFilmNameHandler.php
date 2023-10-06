@@ -47,7 +47,7 @@ class EnterFilmNameHandler implements TelegramHandler
             ],
         ]);
         $this->setState($dto->chat_id, $search);
-        dd($buttons[5]);
+//        dd($buttons[5]);
     }
 
     private function getUser(int $chat_id): object
@@ -122,16 +122,6 @@ class EnterFilmNameHandler implements TelegramHandler
             ->where('chat_id', $chat_id)
             ->update([
                 'last_message' => $message,
-            ]);
-    }
-
-    private function setLastData(int $chat_id): void
-    {
-        DB::table('users')
-            ->where('chat_id', $chat_id)
-            ->update([
-                'state' => State::EnterFilmName->value,
-                ''
             ]);
     }
 }

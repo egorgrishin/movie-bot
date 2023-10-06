@@ -12,11 +12,11 @@ class FindMovieHandler implements TelegramHandler
 {
     public function run(Dto $dto): void
     {
+        $this->setState($dto->chat_id);
         Telegram::send([
             'chat_id' => $dto->chat_id,
             'text'    => 'Введите название фильма',
         ]);
-        $this->setState($dto->chat_id);
     }
 
     private function setState(int $chat_id): void
