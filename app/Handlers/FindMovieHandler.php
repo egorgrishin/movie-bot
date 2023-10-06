@@ -212,8 +212,7 @@ class FindMovieHandler implements TelegramHandler
         Количество оценок: $movie->kp_votes_count
         Год: $year
         Возрастные ограничения: $age_rating
-        $image
-        $desc
+        $image $desc
         HTML;
 
         Telegram::update([
