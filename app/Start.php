@@ -16,20 +16,27 @@ use Illuminate\Support\Facades\DB;
 
 class Start
 {
+    /**
+     * Запускает обработку входящих сообщений
+     */
     public function __invoke(Request $request): void
     {
-        if ($this->messageIsCommand($request->dto->data)) {
-            $this->runCommandHandler($request->dto);
-        } else {
-            $this->runStateHandler($request->dto);
-        }
+        $this->messageIsCommand($request->dto->data)
+            ? $this->runCommandHandler($request->dto)
+            : $this->runStateHandler($request->dto);
     }
 
+    /**
+     * Проверяет, является ли сообщение командой
+     */
     private function messageIsCommand(string $message): bool
     {
         return array_key_exists($message, $this->getCommands());
     }
 
+    /**
+     * Запускает обработчик команды
+     */
     public function runCommandHandler(Dto $dto): void
     {
         /** @var TelegramCommand $handler */
@@ -37,6 +44,9 @@ class Start
         $handler->run($dto);
     }
 
+    /**
+     * Запускает обработчик сообщения по состоянию пользователя
+     */
     public function runStateHandler(Dto $dto): void
     {
         $user = $this->getUserByChatId($dto->chat_id);
@@ -46,6 +56,9 @@ class Start
         $handler->run($dto);
     }
 
+    /**
+     * Возвращает пользователя по chat_id
+     */
     private function getUserByChatId(int $chat_id): object
     {
         return DB::table('users')
@@ -53,6 +66,9 @@ class Start
             ->first();
     }
 
+    /**
+     * Возвращает список команд
+     */
     private function getCommands(): array
     {
         return [
@@ -62,6 +78,9 @@ class Start
         ];
     }
 
+    /**
+     * Возвращает список обработчиков этапов
+     */
     private function getStates(): array
     {
         return [
