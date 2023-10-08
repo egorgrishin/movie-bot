@@ -2,11 +2,12 @@
 
 namespace App\Enums;
 
-enum State: int
+enum State: string
 {
-    case Menu = 1;
-    case FindMovie = 2;
-    case MatchMovie = 3;
+    case Menu = 'a';
+    case FindMovie = 'b';
+    case MatchMovie = 'c';
 
-    case ShowMovie = 4;
+    case ShowMovie = 'd';
+    case WishMovies = 'e';
 }

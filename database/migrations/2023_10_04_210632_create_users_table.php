@@ -14,8 +14,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->unsignedBigInteger('chat_id')->primary();
-            $table->unsignedTinyInteger('state')->default(State::Menu->value);
-            $table->string('last_message', 511)->nullable();
+            $table->char('state', 1)->default(State::Menu->value);
             $table->dateTime('created_at')->nullable();
         });
     }
