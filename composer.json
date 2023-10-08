@@ -18,7 +18,10 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/functions.php"
+        ]
     },
     "scripts": {
         "post-root-package-install": [
