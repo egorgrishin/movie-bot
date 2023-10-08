@@ -6,7 +6,6 @@ use App\Classes\Helpers\Emoji;
 use App\Classes\Lumen\Http\Dto;
 use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramHandler;
-use app\Enums\Button\FindMovieButton;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
@@ -39,7 +38,7 @@ class FindMovieHandler implements TelegramHandler
             $message_id = json_decode(Telegram::send([
                 'chat_id' => $dto->chat_id,
                 'text'   => 'Выбери фильм',
-            ])->body(), true)['result']['message_id'];
+            ]), true)['result']['message_id'];
             db()->table('messages')->insert([
                 'chat_id' => $dto->chat_id,
                 'tg_message_id' => $message_id,
@@ -75,7 +74,7 @@ class FindMovieHandler implements TelegramHandler
             ->select([
                 'id',
                 'name',
-                db()->table('kp_rating * kp_votes_count as rating')
+                db()->raw('kp_rating * kp_votes_count as rating')
             ])
             ->whereFullText('name', $search)
             ->forPage($page, 10)
@@ -90,10 +89,10 @@ class FindMovieHandler implements TelegramHandler
             $buttons[] = [[
                 'text'          => Emoji::getNumber(($page - 1) * 10 + $i + 1) . ' ' . $films[$i]->name,
                 'callback_data' => json_encode([
-                    FindMovieButton::Page->value             => $page,
-                    FindMovieButton::FilmId->value           => $films[$i]->id,
-                    FindMovieButton::MessageId->value        => $message_id,
-                    FindMovieButton::ShowDescription->value  => false,
+                    'pg'  => $page,
+                    'id'  => $films[$i]->id,
+                    'mid' => $message_id,
+                    'sd'  => false,
                 ]),
             ]];
         }

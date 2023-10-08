@@ -15,17 +15,21 @@ class Telegram
     /**
      * Отправляет сообщение
      */
-    public static function send(array $data): ResponseInterface
+    public static function send(array $data): string
     {
-        return self::sendRequest(Method::SendMessage, $data);
+        return self::sendRequest(Method::SendMessage, $data)
+            ->getBody()
+            ->getContents();
     }
 
     /**
      * Обновляет сообщение
      */
-    public static function update(array $data): ResponseInterface
+    public static function update(array $data): string
     {
-        return self::sendRequest(Method::EditMessageText, $data);
+        return self::sendRequest(Method::EditMessageText, $data)
+            ->getBody()
+            ->getContents();
     }
 
     private static function sendRequest(Method $method, array $data): ResponseInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Enums\Button;
+namespace App\Enums\Button;
 
 enum FindMovieButton: string
 {
