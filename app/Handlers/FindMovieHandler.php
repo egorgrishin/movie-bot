@@ -7,6 +7,7 @@ use App\Classes\Lumen\Http\Dto;
 use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramHandler;
 use App\Enums\MenuButton;
+use App\Enums\State;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
@@ -279,5 +280,13 @@ class FindMovieHandler implements TelegramHandler
                 'resize_keyboard'   => true,
             ],
         ]);
+        $this->setState($dto->chat_id);
+    }
+
+    private function setState(int $chat_id): void
+    {
+        db()->table('users')
+            ->where('chat_id', $chat_id)
+            ->update(['state' => State::Menu->value]);
     }
 }
