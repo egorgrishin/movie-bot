@@ -2,35 +2,22 @@
 
 namespace App\Exceptions;
 
-use Exception;
-use Illuminate\Http\Response;
+use App\Contracts\TelegramException;
+use Illuminate\Http\JsonResponse;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
     /**
-     * A list of the exception types that should not be reported.
-     */
-    protected $dontReport = [
-        //
-    ];
-
-    /**
      * Report or log an exception.
-     * @throws Exception
+     * @throws ServerError
      */
-    public function report(Throwable $e): void
+    public function render($request, Throwable $e): JsonResponse
     {
-        parent::report($e);
-    }
-
-    /**
-     * Render an exception into an HTTP response.
-     * @throws Throwable
-     */
-    public function render($request, Throwable $e): Response
-    {
-        return parent::render($request, $e);
+        $e instanceof TelegramException
+            ? $e->sendMessage()
+            : throw new ServerError();
+        return response()->json();
     }
 }

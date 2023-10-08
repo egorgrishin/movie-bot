@@ -1,28 +1,56 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace App\Classes\Telegram;
 
-use Illuminate\Support\Facades\Http;
+use App\Exceptions\ServerError;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use Psr\Http\Message\ResponseInterface;
 
 class Telegram
 {
     private const URL = 'https://api.telegram.org';
+    private static ?Client $client = null;
 
-    public static function send(array $data)
+    /**
+     * Отправляет сообщение
+     */
+    public static function send(array $data): ResponseInterface
     {
-        $token = env('BOT_TOKEN');
-        return Http::post(self::URL . "/bot$token/sendMessage", $data);
+        return self::sendRequest(Method::SendMessage, $data);
     }
 
-    public static function update(array $data)
+    /**
+     * Обновляет сообщение
+     */
+    public static function update(array $data): ResponseInterface
     {
-        $token = env('BOT_TOKEN');
-        return Http::post(self::URL . "/bot$token/editMessageText", $data);
+        return self::sendRequest(Method::EditMessageText, $data);
     }
 
-    public static function setKeyboard(array $data)
+    private static function sendRequest(Method $method, array $data): ResponseInterface
     {
-        $token = env('BOT_TOKEN');
-        return Http::post(self::URL . "/bot$token/editMessageReplyMarkup", $data);
+        try {
+            return self::getClient()->post($method->value, [
+                'headers' => [
+                    'Accept'       => 'application/json',
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => $data,
+            ]);
+        } catch (GuzzleException $exception) {
+            logger()->error($exception);
+            throw new ServerError();
+        }
+    }
+
+    private static function getClient(): Client
+    {
+        if (self::$client === null) {
+            self::$client = new Client([
+                'base_uri' => self::URL . '/bot'. env('BOT_TOKEN') . '/',
+            ]);
+        }
+        return self::$client;
     }
 }
