@@ -6,6 +6,7 @@ use App\Classes\Helpers\Emoji;
 use App\Classes\Lumen\Http\Dto;
 use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramHandler;
+use App\Enums\MenuButton;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
@@ -21,6 +22,10 @@ class FindMovieHandler implements TelegramHandler
 
             if (array_key_exists('id', $data)) {
                 $this->showFilm($dto, $data);
+                return;
+            }
+            if (($data['ac'] ?? null) === 'menu') {
+                $this->showMenu($dto, $data);
                 return;
             }
 
@@ -109,7 +114,10 @@ class FindMovieHandler implements TelegramHandler
         }
         $navigation[] = [
             'text'          => 'Меню',
-            'callback_data' => '/menu',
+            'callback_data' => [
+                'ac'  => 'menu',
+                'mid' => $message_id,
+            ],
         ];
         $c = $page * 10;
         $total = db()->table('movies')
@@ -239,6 +247,33 @@ class FindMovieHandler implements TelegramHandler
                             ]),
                         ],
                     ]
+                ],
+                'one_time_keyboard' => true,
+                'resize_keyboard'   => true,
+            ],
+        ]);
+    }
+
+    private function showMenu(Dto $dto, array $data): void
+    {
+        Telegram::update([
+            'chat_id' => $dto->chat_id,
+            'message_id' => $data['mid'],
+            'text'         => 'Выберите действие',
+            'reply_markup' => [
+                'inline_keyboard'   => [
+                    [
+                        [
+                            'text'          => MenuButton::Find->value,
+                            'callback_data' => MenuButton::Find->name,
+                        ],
+                    ],
+                    [
+                        [
+                            'text'          => MenuButton::Wish->value,
+                            'callback_data' => MenuButton::Wish->name,
+                        ],
+                    ],
                 ],
                 'one_time_keyboard' => true,
                 'resize_keyboard'   => true,
