@@ -88,7 +88,7 @@ class FindMovieHandler implements TelegramHandler
         $buttons = [];
         for ($i = 0; $i < $films->count(); $i++) {
             $buttons[] = [[
-                'text'          => Emoji::getNumber($i + 1) . ' ' . $films[$i]->name,
+                'text'          => Emoji::getNumber(($page - 1) * 10 + $i + 1) . ' ' . $films[$i]->name,
                 'callback_data' => json_encode([
                     'pg'       => $page,
                     'id'    => $films[$i]->id,
