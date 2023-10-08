@@ -114,10 +114,10 @@ class FindMovieHandler implements TelegramHandler
         }
         $navigation[] = [
             'text'          => 'Меню',
-            'callback_data' => [
+            'callback_data' => json_encode([
                 'ac'  => 'menu',
                 'mid' => $message_id,
-            ],
+            ]),
         ];
         $c = $page * 10;
         $total = db()->table('movies')
