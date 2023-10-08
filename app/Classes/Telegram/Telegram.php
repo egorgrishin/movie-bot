@@ -44,7 +44,7 @@ class Telegram
             ]);
         } catch (GuzzleException $exception) {
             logger()->error($exception);
-            throw new ServerError();
+            throw new ServerError($exception->getMessage());
         }
     }
 

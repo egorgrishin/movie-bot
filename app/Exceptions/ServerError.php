@@ -11,7 +11,7 @@ class ServerError extends Exception implements TelegramException
     {
         Telegram::send([
             'chat_id' => $this->dto->chat_id,
-            'text'    => 'Ошибка :(',
+            'text'    => "Ошибка :(\n$this->message",
         ]);
     }
 }

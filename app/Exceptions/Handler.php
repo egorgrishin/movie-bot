@@ -17,7 +17,7 @@ class Handler extends ExceptionHandler
     {
         $e instanceof TelegramException
             ? $e->sendMessage()
-            : throw new ServerError();
+            : throw new ServerError($e->getMessage());
         return response()->json();
     }
 }
