@@ -6,9 +6,9 @@ use App\Classes\Helpers\Emoji;
 use App\Classes\Lumen\Http\Dto;
 use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramHandler;
+use app\Enums\Button\FindMovieButton;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class FindMovieHandler implements TelegramHandler
 {
@@ -27,7 +27,7 @@ class FindMovieHandler implements TelegramHandler
 
             $page = (int) $data['pg'];
             $message_id = $data['mid'];
-            $message = DB::table('messages')
+            $message = db()->table('messages')
                 ->where('chat_id', $dto->chat_id)
                 ->where('tg_message_id', $data['mid'])
                 ->first();
@@ -40,7 +40,7 @@ class FindMovieHandler implements TelegramHandler
                 'chat_id' => $dto->chat_id,
                 'text'   => 'Выбери фильм',
             ])->body(), true)['result']['message_id'];
-            DB::table('messages')->insert([
+            db()->table('messages')->insert([
                 'chat_id' => $dto->chat_id,
                 'tg_message_id' => $message_id,
                 'text' => $search,
@@ -71,11 +71,11 @@ class FindMovieHandler implements TelegramHandler
 
     private function getFilms(int $page, string $search): Collection
     {
-        return DB::table('movies')
+        return db()->table('movies')
             ->select([
                 'id',
                 'name',
-                DB::raw('kp_rating * kp_votes_count as rating')
+                db()->table('kp_rating * kp_votes_count as rating')
             ])
             ->whereFullText('name', $search)
             ->forPage($page, 10)
@@ -90,10 +90,10 @@ class FindMovieHandler implements TelegramHandler
             $buttons[] = [[
                 'text'          => Emoji::getNumber(($page - 1) * 10 + $i + 1) . ' ' . $films[$i]->name,
                 'callback_data' => json_encode([
-                    'pg'       => $page,
-                    'id'    => $films[$i]->id,
-                    'mid' => $message_id,
-                    'sd'  => false,
+                    FindMovieButton::Page->value             => $page,
+                    FindMovieButton::FilmId->value           => $films[$i]->id,
+                    FindMovieButton::MessageId->value        => $message_id,
+                    FindMovieButton::ShowDescription->value  => false,
                 ]),
             ]];
         }
@@ -113,7 +113,7 @@ class FindMovieHandler implements TelegramHandler
             'callback_data' => '/menu',
         ];
         $c = $page * 10;
-        $total = DB::table('movies')
+        $total = db()->table('movies')
             ->select('id', 'name')
             ->whereFullText('name', $search)
             ->count();
@@ -141,18 +141,18 @@ class FindMovieHandler implements TelegramHandler
             $action = $data['ac'];
             if (strpos($action, 'like:') !== false) {
                 if (strpos($action, 'cr') !== false) {
-                    $is_like = DB::table('movie_user')
+                    $is_like = db()->table('movie_user')
                         ->where('movie_id', $film_id)
                         ->where('user_id', $dto->chat_id)
                         ->exists();
                     if (!$is_like) {
-                        DB::table('movie_user')->insert([
+                        db()->table('movie_user')->insert([
                             'movie_id' => $film_id,
                             'user_id' => $dto->chat_id,
                         ]);
                     }
                 } else {
-                    DB::table('movie_user')
+                    db()->table('movie_user')
                         ->where('movie_id', $film_id)
                         ->where('user_id', $dto->chat_id)
                         ->delete();
@@ -160,13 +160,13 @@ class FindMovieHandler implements TelegramHandler
             }
         }
 
-        $movie = DB::table('movies')
+        $movie = db()->table('movies')
             ->where('id', $film_id)
             ->first();
 
-        $genres = DB::table('genres')
+        $genres = db()->table('genres')
             ->whereExists(function (Builder $query) use ($film_id) {
-                $query->select(DB::raw(1))
+                $query->select(db()->raw(1))
                     ->from('genre_movie')
                     ->where('genre_id', $film_id)
                     ->whereColumn('genres.id', 'genre_movie.genre_id');
@@ -175,7 +175,7 @@ class FindMovieHandler implements TelegramHandler
             ->pluck('name')
             ->join(', ');
 
-        $is_like = DB::table('movie_user')
+        $is_like = db()->table('movie_user')
             ->where('movie_id', $film_id)
             ->where('user_id', $dto->chat_id)
             ->exists();

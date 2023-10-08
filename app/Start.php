@@ -12,7 +12,6 @@ use App\Enums\Command;
 use App\Enums\State;
 use App\Handlers\FindMovieHandler;
 use App\Handlers\MenuHandler;
-use Illuminate\Support\Facades\DB;
 
 class Start
 {
@@ -61,7 +60,7 @@ class Start
      */
     private function getUserByChatId(int $chat_id): object
     {
-        return DB::table('users')
+        return db()->table('users')
             ->where('chat_id', $chat_id)
             ->first();
     }
@@ -84,9 +83,9 @@ class Start
     private function getStates(): array
     {
         return [
-            State::Menu->value          => MenuHandler::class,
-            State::FindMovie->value     => FindMovieHandler::class,
-            State::MatchMovie->value    => FindMovieHandler::class,
+            State::Menu->value       => MenuHandler::class,
+            State::FindMovie->value  => FindMovieHandler::class,
+            State::MatchMovie->value => FindMovieHandler::class,
         ];
     }
 }

@@ -7,7 +7,6 @@ use App\Classes\Telegram\Telegram;
 use App\Enums\MenuButton;
 use App\Enums\State;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Facades\DB;
 
 class MenuHandler
 {
@@ -52,9 +51,10 @@ class MenuHandler
 
     private function wishMovies(int $chat_id): void
     {
-        $movies = DB::table('movies')
+        $this->setState($chat_id, State::WishMovies);
+        $movies = db()->table('movies')
             ->whereExists(function (Builder $query) use ($chat_id) {
-                $query->select(DB::raw(1))
+                $query->select(db()->raw(1))
                     ->from('movie_user')
                     ->where('user_id', $chat_id)
                     ->whereColumn('movies.id', 'movie_user.movie_id');
@@ -70,7 +70,7 @@ class MenuHandler
 
     private function setState(int $chat_id, State $state): void
     {
-        DB::table('users')
+        db()->table('users')
             ->where('chat_id', $chat_id)
             ->update(['state' => $state->value]);
     }

@@ -12,7 +12,7 @@ $app = new App\Classes\Lumen\Application(
 );
 
 //$app->withEloquent();
-$app->withFacades();
+//$app->withFacades();
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
@@ -25,9 +25,9 @@ $app->singleton(
 
 $app->configure('app');
 
-$app->middleware([
-    App\Middleware\LoggingRequest::class,
-]);
+//$app->middleware([
+//    //
+//]);
 
 $app->register(App\Providers\AppServiceProvider::class);
 
