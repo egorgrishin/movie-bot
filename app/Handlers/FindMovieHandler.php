@@ -2,10 +2,10 @@
 
 namespace App\Handlers;
 
+use App\Classes\Helpers\Emoji;
 use App\Classes\Lumen\Http\Dto;
 use App\Classes\Telegram\Telegram;
 use App\Contracts\TelegramHandler;
-use App\Enums\Number;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -85,22 +85,10 @@ class FindMovieHandler implements TelegramHandler
 
     private function getButtons(int $message_id, int $page, string $search, Collection $films): array
     {
-        $nums = [
-            Number::One->value,
-            Number::Two->value,
-            Number::Three->value,
-            Number::Four->value,
-            Number::Five->value,
-            Number::Six->value,
-            Number::Seven->value,
-            Number::Eight->value,
-            Number::Nine->value,
-            Number::Ten->value,
-        ];
         $buttons = [];
         for ($i = 0; $i < $films->count(); $i++) {
             $buttons[] = [[
-                'text'          => $nums[$i] . ' ' . $films[$i]->name,
+                'text'          => Emoji::getNumber($i + 1) . ' ' . $films[$i]->name,
                 'callback_data' => json_encode([
                     'pg'       => $page,
                     'id'    => $films[$i]->id,
@@ -205,13 +193,13 @@ class FindMovieHandler implements TelegramHandler
 
         $message = <<<HTML
         <b>$movie->name</b>
-
+        $image
         Жанры: $genres
         Тип: $movie->type
         Рейтинг: $movie->kp_rating
         Количество оценок: $movie->kp_votes_count
         Год: $year
-        Возрастные ограничения: $age_rating $image $desc
+        Возрастные ограничения: $age_rating $desc
         HTML;
 
         Telegram::update([
